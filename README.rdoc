@@ -5,7 +5,7 @@ ActiveRecord::Base#attr_accessible.
 
 Attributes named in this macro are suggested to be non-visible to the outside world.
 
-Because {default permit is dumb}[http://bit.ly/default_permit_is_dumb],
+Because "default permit is dumb":http://bit.ly/default_permit_is_dumb,
 this module only allows you to whitelist attributes.
 
 == !! Please be aware !!
