@@ -19,40 +19,31 @@ exclusions are applied:
 This module only allows you to whitelist attributes. This is because
 {default permit is dumb}[http://bit.ly/default_permit_is_dumb]
 
-
-
----------------------------------------------------------------------------
-
 == Example
 
-<code><pre>
-class User
-  # User has attributes name, email, password; and has_many roles.
-  
-  # We want the user to be able to modify her name and email, but not
-  # roles.
-  attr_accessible       :name, :email, :password
+  class User
+    # User has attributes name, email, password; and has_many roles.
 
-  # The to_xml, to_json, etc will show a user's id, name, and roles -- 
-  attr_visible          :id,   :name,  :roles
-  # and additionally the value given by the num_posts
-  serialize_defaults    :methods => :num_posts
+    # We want the user to be able to modify her name and email, but not
+    # roles.
+    attr_accessible       :name, :email, :password
 
-  #  number of posts by this user
-  def num_posts
-    # ... do stuff ...
+    # The to_xml, to_json, etc will show a user's id, name, and roles -- 
+    attr_visible          :id,   :name,  :roles
+    # and additionally the value given by the num_posts
+    serialize_defaults    :methods => :num_posts
+
+    #  number of posts by this user
+    def num_posts
+      # ... do stuff ...
+    end
   end
-end
-</pre></code>
 
 Then we would get
 
-<code><pre>
   user = User.new("name" => "David", "email" => "foo@bar.com", "password" => "monkey")
   user.to_json # {"user": { "id":1, "name":"David", "email":"foo@bar.com" } }
-</pre></code>
 
----------------------------------------------------------------------------
 ---------------------------------------------------------------------------
 
 Copyright (c) 2008 Philip (flip) Kromer for infochimps.org
