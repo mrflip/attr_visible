@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>File: README.rdoc</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+  <div id="fileHeader">
+    <h1>README.rdoc</h1>
+    <table class="header-table">
+    <tr class="top-aligned-row">
+      <td><strong>Path:</strong></td>
+      <td>README.rdoc
+      </td>
+    </tr>
+    <tr class="top-aligned-row">
+      <td><strong>Last Update:</strong></td>
+      <td>Wed Aug 20 15:49:33 -0500 2008</td>
+    </tr>
+    </table>
+  </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <h1><a href="../classes/AttrVisible.html">AttrVisible</a></h1>
+<p>
+Adds a macro <tt>attr_visible</tt>, reminiscent perhaps of
+ActiveRecord::Base#attr_accessible.
+</p>
+<p>
+Attributes named in this macro are suggested to be non-visible to the
+outside world.
+</p>
+<p>
+Because <a href="http://bit.ly/default_permit_is_dumb">default permit is
+dumb</a>, this module only allows you to whitelist attributes.
+</p>
+<h2>!! Please be aware !!</h2>
+<p>
+Nothing currently enforces these instructions in general. Only the
+following exclusions are applied:
+</p>
+<ul>
+<li>The various serialization methods (<tt>to_xml</tt>, <tt>to_json</tt>, etc.)
+are monkeypatched to, by default, exclude these attributes.
+
+<ul>
+<li>Supplying an <tt>only</tt> option to to_xml and friends will freely
+override their defaults.
+
+</li>
+<li>So will supplying an <tt>only</tt> option to serialize_defaults.
+
+</li>
+</ul>
+</li>
+<li>That&#8216;s it, actually.
+
+</li>
+</ul>
+<h2>Example</h2>
+<pre>
+  class User
+    # User has attributes name, email, password; and has_many roles.
+
+    # We want the user to be able to modify her name and email, but not
+    # roles.
+    attr_accessible       :name, :email, :password
+
+    # The to_xml, to_json, etc will show a user's id, name, and roles --
+    attr_visible          :id,   :name,  :roles
+    # and additionally the value given by the num_posts
+    serialize_defaults    :methods =&gt; :num_posts
+
+    #  number of posts by this user
+    def num_posts
+      # ... do stuff ...
+    end
+  end
+</pre>
+<p>
+Then we would get
+</p>
+<pre>
+  user = User.new(&quot;name&quot; =&gt; &quot;David&quot;, &quot;email&quot; =&gt; &quot;foo@bar.com&quot;, &quot;password&quot; =&gt; &quot;monkey&quot;)
+  user.to_json # {&quot;user&quot;: { &quot;id&quot;:1, &quot;name&quot;:&quot;David&quot;, &quot;email&quot;:&quot;foo@bar.com&quot; } }
+</pre>
+
+    </div>
+
+
+   </div>
+
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>
