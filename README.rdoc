@@ -1,7 +1,7 @@
 = AttrVisible
-===========
 
-Adds a macro +attr_visible+
+Adds a macro +attr_visible+, reminiscent perhaps of
+ActiveRecord::Base#attr_accessible.
 
 Attributes named in this macro are suggested to be non-visible to the outside world.
 
@@ -11,9 +11,15 @@ Nothing currently enforces these instructions in general. Only the following
 exclusions are applied:
 
 * The various serialization methods (+to_xml+, +to_json+, etc.) are
-  monkeypatched to, by default, exclude these attributes.
+  monkeypatched to, by default, exclude these attributes. Supplying an +:only+
+  option to to_xml and friends will freely override the defaults
 
 * That's it, actually.
+
+This module only allows you to whitelist attributes. This is because
+{default permit is dumb}[http://bit.ly/default_permit_is_dumb]
+
+
 
 ---------------------------------------------------------------------------
 
