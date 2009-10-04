@@ -1,52 +1,52 @@
 = AttrVisible
+  
+== Description
 
-Adds a macro +attr_visible+, reminiscent perhaps of
-ActiveRecord::Base#attr_accessible.
+Makes it easy to list attributes that shouldn't be serialized by to_xml and
+friends.
 
-Attributes named in this macro are suggested to be non-visible to the outside world.
+First, use the writer +attr_visible+ to list attributes that shouldn't be shown
+to the world.  Second, call +serialize_defaults+ with +:only =>
+visible_attributes+.  You may also list associations that you'd like to include,
+or any other argument accepted by {the ActiveRecord::Serialization
+methods}[http://api.rubyonrails.org/classes/ActiveRecord/Serialization.html]
 
-Because {default permit is dumb}[http://bit.ly/default_permit_is_dumb],
-this module only allows you to whitelist attributes.
+You can {only whitelist attributes}[http://bit.ly/default_permit_is_dumb].
 
 == !! Please be aware !!
 
-Nothing currently enforces these instructions in general. Only the following
-exclusions are applied:
-
-* The various serialization methods (+to_xml+, +to_json+, etc.) are
-  monkeypatched to, by default, exclude these attributes.
-
-  * Supplying an +only+ option to to_xml and friends will freely override their
-    defaults.
-
-  * So will supplying an +only+ option to serialize_defaults.
-
-* That's it, actually.
+Nothing enforces these attributes to be hidden in general. You should use
+serialize_defaults to create a whitelist of attributes, and in your views you
+can use +visible_attributes+ to check whether fields are listed as visible.
 
 == Example
 
   class User
+    has_many :roles
+    has_many :posts
     # User has attributes name, email, password; and has_many roles.
 
-    # We want the user to be able to modify her name and email, but not
-    # roles.
-    attr_accessible       :name, :email, :password
+    # A user should to be able to modify her name and email, but not roles.
+    attr_accessible       :name, :email, :password, :password_confirmation
 
-    # The to_xml, to_json, etc will show a user's id, name, and roles -- 
-    attr_visible          :id,   :name,  :roles
-    # and additionally the value given by the num_posts
-    serialize_defaults    :methods => :num_posts
+    # Let to_xml, to_json, etc show a user's id, name, roles and date they
+    # joined, but don't show their email or password visible to the world.    
+    attr_visible          :id,   :name,  :roles, :created_at
+    # Additionally show how many posts they've made
+    serialize_defaults    :only => visible_attributes, :methods => :num_posts
 
     #  number of posts by this user
     def num_posts
-      # ... do stuff ...
+      posts.count
     end
   end
 
 Then we would get
 
-  user = User.new("name" => "David", "email" => "foo@bar.com", "password" => "monkey")
-  user.to_json # {"user": { "id":1, "name":"David", "email":"foo@bar.com" } }
+  user = User.new("name" => "David", "email" => "foo@bar.com", "password" => "monkey", ... )
+  user.to_json # {"user": { "id":1, "name":"David", "email":"foo@bar.com", :created_at => '...', :num_posts => 0 } }
+
+
 
 ---------------------------------------------------------------------------
 
