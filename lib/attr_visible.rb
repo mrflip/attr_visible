@@ -1,22 +1,23 @@
 module AttrVisible
   def self.included(base) #:nodoc:
-    base.cattr_accessor :serialize_defaults_options
+    base.class_inheritable_accessor :serialize_defaults_options
+    base.serialize_defaults_options = {}
     base.extend ClassMethods
+    [:to_xml, :to_json, :to_yaml].each do |to_meth|
+      base.class_eval <<-end_eval
+      def #{to_meth}_with_defaults( options = {}, &block)
+        options = options.reverse_merge(serialize_defaults_options)
+        self.#{to_meth}_without_defaults(options, &block)
+      end
+      alias_method_chain :#{to_meth}, :defaults
+      end_eval
+    end
   end
 
   module ClassMethods
 
     def serialize_defaults serialize_options
-      [:to_xml, :to_json, :to_yaml].each do |to_meth|
-        self.serialize_defaults_options = serialize_options
-        class_eval <<-end_eval
-        def #{to_meth}_with_defaults( options = {}, &block)
-          serialize_defaults_options[:only] ||= self.class.visible_attributes
-          self.#{to_meth}_without_defaults(options.reverse_merge(serialize_defaults_options), &block)
-        end
-        alias_method_chain to_meth, :defaults
-        end_eval
-      end
+      self.serialize_defaults_options.merge! serialize_options
     end
 
     # Attributes named in this macro are suggested to be non-visible to the outside world.
@@ -34,6 +35,7 @@ module AttrVisible
     #
     def attr_visible(*attributes)
       write_inheritable_attribute("attr_visible", Set.new(attributes.map(&:to_s)) + (visible_attributes || []))
+      serialize_defaults_options[:only] = read_inheritable_attribute("attr_visible")
     end
 
     # Returns an array of all the attributes that have been made accessible, by default, for serialization
